@@ -35,7 +35,17 @@ read_pitch <- function(filename) {
     name <- as.character(filename)
     
     data <- cbind(raw, name) %>%
-      
+      mutate(nrow = nrow(raw)) %>%
+      summarise(mean = mean(f0),
+                sd = sd(f0),
+                range = max(f0) - min(f0),
+                iqr = IQR(f0),
+                median = mean(f0),
+                mean_abs = mad(f0),
+                coef_var = sd / mean,
+                nrow = max(nrow))
+    
+    data <- data %>%
       mutate(name = str_remove_all(name, "Pitch/"),
          name = str_remove_all(name, ".txt"),
          name = str_remove_all(name, "_f0")) %>%
@@ -45,14 +55,14 @@ read_pitch <- function(filename) {
          ID = substr(name, 10, 12),
          triangle = substr(name, 14, 14)) %>%
       
-      select(-name)
-
+      select(-name) %>%
+      select(ID, study, diagnosis, triangle, nrow, mean:coef_var)
     
     return(data)
 }
 
 # test it on just one file while writing the function
-test_data_2 = read_pitch("Pitch/Study1D0S101T1_f0.txt")
+test_data_4 = read_pitch("Pitch/Study1D0S101T1_f0.txt")
 
 # when you've created a function that works, you can
 pitch_data = list.files("Pitch/*") %>%
