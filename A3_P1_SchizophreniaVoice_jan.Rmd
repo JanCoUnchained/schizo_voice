@@ -62,14 +62,11 @@ read_pitch <- function(filename) {
     return(data)
 }
 
-# test it on just one file while writing the function
-test_data_4 = read_pitch("Pitch/Study1D0S101T1_f0.txt")
-
 # when you've created a function that works, you can
-a = paste0("Pitch/", list.files("Pitch/"))
+path = paste0("Pitch/", list.files("Pitch/"))
 
-pitch_data = a %>%
-    purrr::map_df(read_pitch(a))
+pitch_data = path %>%
+    purrr::map_df(read_pitch)
 
 write_csv(pitch_data, "data.csv")
 ```
