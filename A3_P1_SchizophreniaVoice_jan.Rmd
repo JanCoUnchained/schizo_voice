@@ -43,7 +43,8 @@ read_pitch <- function(filename) {
                 median = mean(f0),
                 mean_abs = mad(f0),
                 coef_var = sd / mean,
-                nrow = max(nrow))
+                nrow = max(nrow),
+                se = sd / sqrt(nrow))
     
     data <- data %>%
       mutate(name = str_remove_all(name, "Pitch/"),
@@ -56,7 +57,7 @@ read_pitch <- function(filename) {
          triangle = substr(name, 14, 14)) %>%
       
       select(-name) %>%
-      select(ID, study, diagnosis, triangle, nrow, mean:coef_var)
+      select(ID, study, diagnosis, triangle, nrow, mean:coef_var, se)
     
     return(data)
 }
