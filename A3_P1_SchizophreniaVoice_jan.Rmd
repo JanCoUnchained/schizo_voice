@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(pacman)
-p_load(tidyverse, pastecs, lmerTest)
+p_load(tidyverse, pastecs, lmerTest, corrplot)
 
 pdf <- read_csv("data.csv")
 ```
@@ -31,7 +31,7 @@ N.B. There are looots of files to be dealt with. Maybe too many for your compute
 Hint: There is some information in the filenames that you might need.
 Hint: It might be a good idea to first create a function which loads and parses one file, and then loop through the list of files to read them all. For example
 
-```{r}
+```{r data import}
 read_pitch <- function(filename) {
     raw <- read.delim(filename)
     name <- as.character(filename)
@@ -93,9 +93,9 @@ iqr_lo <- function(variable) {
   summary(variable)[2] - 1.5 * IQR(variable)
 }
 
-outlier <- pitch_data %>%
-  mutate(outlier_mean = case_when(mean > iqr_hi(pitch_data$mean) ~ 1,
-                             mean < iqr_lo(pitch_data$mean) ~ 1,
+outlier <- pdf %>%
+  mutate(outlier_mean = case_when(mean > iqr_hi(pdf$mean) ~ 1,
+                             mean < iqr_lo(pdf$mean) ~ 1,
                              TRUE ~ 0))
 
 ggplot(outlier, aes(sd, mean)) +
@@ -108,28 +108,37 @@ ggplot(outlier, aes(sd, mean)) +
 - Bonus points: cross-validate the model and report the betas and standard errors from all rounds to get an idea of how robust the estimates are. 
 3a. Is study a significant predictor in these models? What should you infer from this? Does study interact with diagnosis? What should you infer from this?
 
+```{r correlations}
+cor_spearman <- pdf[,5:13]
+cor_spearman <- round(cor(cor_spearman, method = "spearman"),2)
+
+corrplot(cor_spearman, method="number",col=brewer.pal(n=8, name="PuOr"),type="upper",tl.col="darkblue")
+corrplot(cor_spearman, col = brewer.pal(n=8, name="PuOr"), type = "upper", tl.col="darkblue")
+```
+
+
 ```{r models}
 cols <- c("ID", "study", "diagnosis", "triangle")
-pitch_data[cols] <- lapply(pitch_data[cols], factor) 
+pdf[cols] <- lapply(pdf[cols], factor) 
 
 #making a fucking model
 p_load(lme4)
-model1 <- lmer(mean ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pitch_data)
+model1 <- lmer(mean ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pdf)
 summary(model1) #bigger mean - significant
 
-model2 <- lmer(sd ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pitch_data)
+model2 <- lmer(sd ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pdf)
 summary(model2) #not significant
 
-model3 <- lmer(iqr ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pitch_data) 
+model3 <- lmer(iqr ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pdf) 
 summary(model3) #smaller iqr
 
-model4 <- lmer(range ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pitch_data) 
+model4 <- lmer(range ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pdf) 
 summary(model4) #significant
 
-model5 <- lmer(median ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pitch_data) 
+model5 <- lmer(median ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pdf) 
 summary(model5) #very significant 
 
-model6 <- lmer(mean_abs ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pitch_data)
+model6 <- lmer(mean_abs ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pdf)
 summary(model6) #very significant. 
 ```
 
