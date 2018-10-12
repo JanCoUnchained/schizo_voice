@@ -69,7 +69,7 @@ path = paste0("Pitch/", list.files("Pitch/"))
 
 pdf = path %>%
     purrr::map_df(read_pitch) %>%
-    group_by(ID) %>%
+    group_by(ID, study, diagnosis) %>%
     arrange(triangle, .by_group = T)
 
 write_csv(pdf, "data.csv")
