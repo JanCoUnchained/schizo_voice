@@ -108,13 +108,34 @@ ggplot(outlier, aes(sd, mean)) +
 - Bonus points: cross-validate the model and report the betas and standard errors from all rounds to get an idea of how robust the estimates are. 
 3a. Is study a significant predictor in these models? What should you infer from this? Does study interact with diagnosis? What should you infer from this?
 
-```{r}
-model1 <- lmer(mean ~ diagnosis + range + sd + se + (1 + mean|ID), data = pitch_data)
-summary(model1)
+```{r models}
+cols <- c("ID", "study", "diagnosis", "triangle")
+pitch_data[cols] <- lapply(pitch_data[cols], factor) 
 
-anova(model1, type = "3")
+#making a fucking model
+p_load(lme4)
+model1 <- lmer(mean ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pitch_data)
+summary(model1) #bigger mean - significant
+
+model2 <- lmer(sd ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pitch_data)
+summary(model2) #not significant
+
+model3 <- lmer(iqr ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pitch_data) 
+summary(model3) #smaller iqr
+
+model4 <- lmer(range ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pitch_data) 
+summary(model4) #significant
+
+model5 <- lmer(median ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pitch_data) 
+summary(model5) #very significant 
+
+model6 <- lmer(mean_abs ~ diagnosis + (1|ID) + (1|triangle) + (1|study), data = pitch_data)
+summary(model6) #very significant. 
 ```
 
+```{r power}
+
+```
 
 4. Bonus Question: Compare effect size of diagnosis across the different measures. Which measure seems most sensitive?
 - Tip: to compare across measures you need to put all of them on the same scale, that is, you need to "standardize" them (z-score)
