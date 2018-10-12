@@ -40,7 +40,7 @@ read_pitch <- function(filename) {
                 sd = sd(f0),
                 range = max(f0) - min(f0),
                 iqr = IQR(f0),
-                median = mean(f0),
+                median = median(f0),
                 mean_abs = mad(f0),
                 coef_var = sd / mean,
                 nrow = max(nrow),
@@ -62,13 +62,13 @@ read_pitch <- function(filename) {
     return(data)
 }
 
-# test it on just one file while writing the function
-test_data_4 = read_pitch("Pitch/Study1D0S101T1_f0.txt")
-
 # when you've created a function that works, you can
-pitch_data = list.files("Pitch/*") %>%
+path = paste0("Pitch/", list.files("Pitch/"))
+
+pitch_data = path %>%
     purrr::map_df(read_pitch)
-write_csv(pitch_data, ...)
+
+write_csv(pitch_data, "data.csv")
 ```
 
 
