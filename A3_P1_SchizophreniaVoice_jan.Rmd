@@ -40,7 +40,7 @@ read_pitch <- function(filename) {
                 sd = sd(f0),
                 range = max(f0) - min(f0),
                 iqr = IQR(f0),
-                median = mean(f0),
+                median = median(f0),
                 mean_abs = mad(f0),
                 coef_var = sd / mean,
                 nrow = max(nrow),
