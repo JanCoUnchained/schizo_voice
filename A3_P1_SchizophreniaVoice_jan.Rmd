@@ -10,6 +10,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(pacman)
 p_load(tidyverse, pastecs, lmerTest)
+
+pdf <- read_csv("data.csv")
 ```
 
 ## Assignment 2 - Part 1 - Assessing voice in schizophrenia
@@ -54,7 +56,7 @@ read_pitch <- function(filename) {
       mutate(study = substr(name, 6, 6),
          diagnosis = substr(name, 8, 8),
          ID = substr(name, 10, 12),
-         triangle = substr(name, 14, 15)) %>%
+         triangle = as.numeric(substr(name, 14, 15))) %>%
       
       select(-name) %>%
       select(ID, study, diagnosis, triangle, nrow, mean:coef_var, se)
@@ -65,10 +67,12 @@ read_pitch <- function(filename) {
 # when you've created a function that works, you can
 path = paste0("Pitch/", list.files("Pitch/"))
 
-pitch_data = path %>%
-    purrr::map_df(read_pitch)
+pdf = path %>%
+    purrr::map_df(read_pitch) %>%
+    group_by(ID) %>%
+    arrange(triangle, .by_group = T)
 
-write_csv(pitch_data, "data.csv")
+write_csv(pdf, "data.csv")
 ```
 
 
