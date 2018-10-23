@@ -9,8 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(pacman)
-p_load(tidyverse, pastecs, lmerTest, corrplot, RColorBrewer)
-
+p_load(tidyverse, pastecs, lmerTest, corrplot, RColorBrewer, DescTools)
 pdf <- read_csv("data.csv")
 ```
 
@@ -43,7 +42,7 @@ read_pitch <- function(filename) {
                 range = max(f0) - min(f0),
                 iqr = IQR(f0),
                 median = median(f0),
-                mean_abs = mad(f0),
+                mean_abs = MeanAD(f0),
                 coef_var = sd / mean,
                 nrow = max(nrow),
                 se = sd / sqrt(nrow))
