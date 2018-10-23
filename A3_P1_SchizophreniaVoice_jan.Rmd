@@ -122,28 +122,23 @@ cols <- c("ID", "study", "diagnosis", "triangle")
 pdf[cols] <- lapply(pdf[cols], factor) 
 
 #making a model
-model1 <- lmer(mean ~ diagnosis + study + (1|ID) + (1|triangle), data = pdf)
+model1 <- lmer(mean ~ diagnosis * study + (1|ID) + (1|triangle), data = pdf)
 summary(model1) #bigger mean - significant
 
-model2 <- lmer(sd ~ diagnosis + study + (1|ID) + (1|triangle), data = pdf)
+model2 <- lmer(sd ~ diagnosis * study + (1|ID) + (1|triangle), data = pdf)
 summary(model2) #not significant
 
-model3 <- lmer(iqr ~ diagnosis + study + (1|ID) + (1|triangle), data = pdf) 
+model3 <- lmer(iqr ~ diagnosis * study + (1|ID) + (1|triangle), data = pdf) 
 summary(model3) #smaller iqr
 
-model4 <- lmer(range ~ diagnosis + study + (1|ID) + (1|triangle), data = pdf) 
+model4 <- lmer(range ~ diagnosis * study + (1|ID) + (1|triangle), data = pdf) 
 summary(model4) #significant
 
-model5 <- lmer(median ~ diagnosis + study + (1|ID) + (1|triangle), data = pdf) 
+model5 <- lmer(median ~ diagnosis * study + (1|ID) + (1|triangle), data = pdf) 
 summary(model5) #very significant 
 
-model6 <- lmer(mean_abs ~ diagnosis + study + (1|ID) + (1|triangle), data = pdf)
+model6 <- lmer(mean_abs ~ diagnosis * study + (1|ID) + (1|triangle), data = pdf)
 summary(model6) #very significant. 
-```
-
-```{r interaction}
-model7 <- lmer(mean ~ diagnosis * study + (1|ID) + (1|triangle), data = pdf)
-summary(model1)
 ```
 
 4. Bonus Question: Compare effect size of diagnosis across the different measures. Which measure seems most sensitive?
