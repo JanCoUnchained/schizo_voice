@@ -138,6 +138,8 @@ summary(model5) #very significant
 
 model6 <- lmer(mean_abs ~ diagnosis * study + (1|ID) + (1|triangle), data = pdf)
 summary(model6) #very significant. 
+
+
 ```
 
 4. Bonus Question: Compare effect size of diagnosis across the different measures. Which measure seems most sensitive?
