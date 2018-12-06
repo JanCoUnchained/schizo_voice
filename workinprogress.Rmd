@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(pacman)
-p_load(tidyverse, pastecs, lmerTest, corrplot, RColorBrewer, DescTools)
+p_load(tidyverse, pastecs, lmerTest, corrplot, RColorBrewer, DescTools, metafor)
 pdf <- read_csv("data.csv")
 ```
 
@@ -162,7 +162,6 @@ newdata$SD <- predict(model2, newdata, allow.new.levels=T)
 newdata$MEAN <- predict(model1, newdata, allow.new.levels=T)
 
 #Adding N from diff studies 
-library(tidyverse)
 great <- pdf %>%
   group_by(study, diagnosis) %>%
   summarize(n = n())
@@ -187,7 +186,6 @@ combined <- inner_join(TD, SCHIZO, by = "study")
 combined <- combined[c(1,7,4,6,3,5,2)]
 
 #making the three dataframes that we need. 
-library(metafor)
 combined=escalc('SMD', n1i=SCHIZO_N, n2i=TD_N, m1i=PitchMeanSCHIZO_mean,
 m2i=PitchMeanTD_mean, sd1i=PitchMeanSCHIZO_SD, sd2i=PitchMeanTD_SD,
 data = combined)
